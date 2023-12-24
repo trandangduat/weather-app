@@ -1,1 +1,74 @@
 @import url("./reset.css");
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+:root {
+    /* Ayu dark Colorscheme  */
+    /* https://gogh-co.github.io/Gogh/ */
+    --bg-clr: #0A0E14;
+    --txt: #B3B1AD;
+    --err: #FF3333;
+    --success: #C2D94C; 
+    --success-2: #95E6CB; 
+    --warn: #FF8F40;
+    --note: #FFEE99;
+    --instruct: #59C2FF;
+    
+}
+
+.error {
+    color: var(--err);
+}
+.success {
+    color: var(--success);
+}
+.warning {
+    color: var(--warn);
+}
+.note {
+    color: var(--note);
+}
+.instruct {
+    color: var(--instruct);
+}
+
+#terminal {
+    font-family: 'Ubuntu Mono', monospace;
+    font-size: 1.1rem;
+    background-color: var(--bg-clr);
+    color: var(--txt);
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+#terminal strong {
+    font-weight: bold;
+}
+
+input {
+    outline: 0;
+    border: 0;
+    background: transparent;
+    color: var(--txt);
+    font-family: 'Ubuntu Mono', monospace;
+    font-size: 1.1rem;
+    width: 100%;
+}
+
+#terminal > .line {
+    flex: 1;
+    display: flex;
+    gap: 5px;
+}
+
+#terminal > .line.command::before {
+    content: ">>";
+    font-weight: bold;
+    color: var(--warn);
+}
+
+#terminal > .line > form {
+    flex: 1;
+    width: 100%;
+}

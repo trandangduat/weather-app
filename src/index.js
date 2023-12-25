@@ -2,7 +2,6 @@ import "./style.css";
 
 const cityForm = document.querySelector("form");
 const commandLine = document.querySelector(".line.command");
-const loadingStages = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]; 
 
 cityForm.addEventListener("submit", process);
 
@@ -26,10 +25,10 @@ async function process (event) {
     cityForm.reset();
 
     // Appending the loading symbol next to the command form when starting fetching
+    const loadingStages = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]; 
     const loadingSymbol = document.createElement("div");
     loadingSymbol.setAttribute("class", "line warning");
     document.body.insertBefore(loadingSymbol, commandLine);
-
     let currentLoadingStage = 0;
     let loadingInterval = setInterval(() => {
         loadingSymbol.textContent = loadingStages[(++currentLoadingStage) % loadingStages.length]
@@ -43,23 +42,40 @@ async function process (event) {
     loadingSymbol.remove();
 
     // Adding result as separate lines 
-    
     if (response.location) {
         newLine(response.location.name, "name");
-        newLine(response.current.temp_c, "temp");
+        newLine(response.current.temp_c + "°C", "temp");
         newLine("", "forecast");
-        response.forecast.forecastday[0].hour.forEach((hour) => {
-            const time = hour.time.split(" ")[1];
-            const temp = hour.temp_c;
-            if (hour.time_epoch >= response.location.localtime_epoch) {
-                newLine(temp, time, 0, "note")
-            }
-        });  
+        let forecastTable = "";
+        forecastTable += "<table>"; 
+            forecastTable += "<tr>"; 
+                forecastTable += "<th>time</th>"     
+                response.forecast.forecastday[0].hour.forEach((hour) => {
+                    const time = hour.time.split(" ")[1];
+                    if (hour.time_epoch >= response.location.localtime_epoch) {
+                        forecastTable += `<th>${time}</th>`;
+                    }
+                }); 
+            forecastTable += "</tr>";
+            forecastTable += "<tr>";
+                forecastTable += "<td>temp</td>"     
+                response.forecast.forecastday[0].hour.forEach((hour) => {
+                    const temp_c = hour.temp_c;
+                    const temp_f = hour.temp_f;
+                    if (hour.time_epoch >= response.location.localtime_epoch) {
+                        forecastTable += `<td>${temp_c}°C</td>`;    
+                    }
+                }); 
+            forecastTable += "</tr>";
+        forecastTable += "</table>";
+        newLine(forecastTable, "");
         
     } else {
         newLine(response, "[ERROR]", 0, "error");
     }
     
+    // Auto scroll to the form 
+    window.scrollTo(0, cityForm.offsetTop); 
 }
 
 async function fetchWeather(CITY_NAME) {

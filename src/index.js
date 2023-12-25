@@ -1,9 +1,10 @@
 import "./style.css";
 
-const cityForm = document.querySelector("form");
+const commandForm = document.querySelector("form");
 const commandLine = document.querySelector(".line.command");
+const terminal = document.querySelector("#terminal");
 
-cityForm.addEventListener("submit", process);
+commandForm.addEventListener("submit", processCommand);
 
 function newLine (contents, prefix = "", isCommand = 0, prefixType = "instruct") {
     const line = document.createElement("div");
@@ -15,15 +16,44 @@ function newLine (contents, prefix = "", isCommand = 0, prefixType = "instruct")
         line.innerHTML = `<strong class = ${prefixType}>${prefix}</strong>`;
     }
     line.innerHTML += contents;
-    document.body.insertBefore(line, commandLine); 
+    terminal.insertBefore(line, commandLine); 
 }
 
-async function process (event) {
-    event.preventDefault();
-    const cityName = event.target.querySelector("input").value;
-    newLine(cityName, "", 1);
-    cityForm.reset();
 
+async function processCommand (event) {
+    event.preventDefault();
+    let command = event.target.querySelector("input").value;
+    newLine(command, "", 1);
+    commandForm.reset();
+
+    command = command.split(" ");
+    if (command[0] == "!w") {
+        command.splice(0, 1); 
+        command.join(" "); 
+        await weatherCommand(command);
+    } 
+    else if (command[0] == "!cls") {
+        clearCommand();
+    } 
+    else {
+        newLine("'" + command[0] + "'" + " is not a valid command.", "[ERROR]", 0, "error");
+    }
+    
+    // Auto scroll to the form 
+    window.scrollTo({
+        top: commandForm.offsetTop,
+        behavior: "smooth",
+    }); 
+}
+
+function clearCommand() {
+    // Except the overlay, ascii banner and the form, every line will be deleted
+    while (terminal.children.length > 3) {
+        terminal.removeChild(terminal.querySelectorAll(".line")[1]);
+    }
+}
+
+async function weatherCommand (cityName) { 
     // Appending the loading symbol next to the command form when starting fetching
     const loadingStages = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]; 
     const loadingSymbol = document.createElement("div");
@@ -73,9 +103,6 @@ async function process (event) {
     } else {
         newLine(response, "[ERROR]", 0, "error");
     }
-    
-    // Auto scroll to the form 
-    window.scrollTo(0, cityForm.offsetTop); 
 }
 
 async function fetchWeather(CITY_NAME) {

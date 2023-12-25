@@ -31,6 +31,12 @@
 .instruct {
     color: var(--instruct);
 }
+.bold {
+    font-weight: bold;
+}
+a {
+    color: var(--success-2);
+}
 
 .overlay {
     background-color: var(--bg-clr);
@@ -97,21 +103,20 @@ input {
 #terminal > .line > #rules {
     display: flex;
     flex-direction: column;
-    gap: 3px;
-    width: 100%;
+    gap: 5px;
+    /* width: 100%; */
     font-size: 1rem;
+    margin: auto 0;
 }
 
-#terminal > .line > #rules > p {
-    display: flex;
+#colorscheme-table {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    justify-content: center;
+    margin-top: 15px;
 }
-
-#terminal > .line > #rules > p > * {
-    flex: 1;
-}
-
-#terminal > .line > #rules > p > strong{
-    flex: .1;
+#colorscheme-table .color-cell {
+    height: 2rem;
 }
 
 table {
